@@ -28,7 +28,7 @@ from functools import reduce
 
 FINAL_MODEL = IsolationForest()
 
-class IsolationForestCMix(BaseEstimator, OutlierMixin):
+class IsolationForestMix(BaseEstimator, OutlierMixin):
 
     def __init__(self, 
                  final_model=FINAL_MODEL, 

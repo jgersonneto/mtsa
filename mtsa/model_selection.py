@@ -88,8 +88,8 @@ class IsolationForestMix(IsolationForestMix):
                 {
                     "n_estimators": 200,
                     "max_depth": 3,
-                    "max_samples": 0,1,
-                    "contamination": 0,1
+                    "max_samples": 0.1,
+                    "contamination": 0.1
                 },
         ]
         
