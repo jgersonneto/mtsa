@@ -1,4 +1,7 @@
-from mtsa import MFCCMix
+from mtsa import (
+    MFCCMix,
+    IForest
+)
 
 from sklearn.model_selection import (
     RandomizedSearchCV,
@@ -67,14 +70,14 @@ class MFCCMixCV(MFCCMix):
         return self.search.score_samples(X=X)
 
 
-class IsolationForestMix(IsolationForestMix):
+class IForestCV(IForest):
     
     def __init__(
         self,
         sampling_rate = 16000,
         random_state = None,
         cv=None) -> None:
-        super(IsolationForestMix, self).__init__(
+        super(IForestCV, self).__init__(
             random_state=random_state,
             sampling_rate=sampling_rate
             )
@@ -87,7 +90,6 @@ class IsolationForestMix(IsolationForestMix):
         params = [
                 {
                     "n_estimators": 200,
-                    "max_depth": 3,
                     "max_samples": 0.1,
                     "contamination": 0.1
                 },
