@@ -1,7 +1,7 @@
-,Unnamed: 0.8,Unnamed: 0.7,Unnamed: 0.6,Unnamed: 0.5,Unnamed: 0.4,Unnamed: 0.3,Unnamed: 0.2,Unnamed: 0.1,Unnamed: 0,actual_dataset,n_estimators,max_samples,contamination,max_features,bootstrap,n_jobs,random_state,verbose,warm_start,AUC_ROC
-0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,path_input_fan_id_06,200.0,128.0,0.1,0.8,0.0,3.0,,0.0,0.0,
+actual_dataset,n_estimators,max_samples,contamination,max_features,bootstrap,n_jobs,random_state,verbose,warm_start,AUC_ROC
+path_input_fan_id_06,200.0,128.0,0.1,0.8,0.0,3.0,,0.0,0.0,
 1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,,,,,,,,,,,0.2936671756662395
-2,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,,path_input_fan_id_06,200.0,128.0,0.1,0.8,0.0,3.0,,0.0,0.0,
+path_input_fan_id_06,200.0,128.0,0.1,0.8,0.0,3.0,,0.0,0.0,
 3,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,,,,,,,,,,,,0.2936288088642659
 4,4.0,4.0,4.0,4.0,4.0,4.0,4.0,,,path_input_fan_id_06,200.0,128.0,0.1,0.8,0.0,3.0,,0.0,0.0,
 5,5.0,5.0,5.0,5.0,5.0,5.0,5.0,,,,,,,,,,,,,0.2936134621434764
