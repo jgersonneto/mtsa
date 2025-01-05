@@ -43,6 +43,8 @@ def run_isolation_forest_result_show():
     path_csv18 = os.path.join(os.getcwd(),  "mtsa", "experiments_result", "Wavelet", "WaveletMfcc", "01", "y_val", "*.csv")
     path_csv19 = os.path.join(os.getcwd(),  "mtsa", "experiments_result", "Wavelet", "WaveletMfcc", "02", "*.csv")
     path_csv20 = os.path.join(os.getcwd(),  "mtsa", "experiments_result", "Wavelet", "WaveletMfcc", "02", "y_val", "*.csv")
+    path_csv21 = os.path.join(os.getcwd(),  "mtsa", "experiments_result", "MFCC", "*.csv")
+    path_csv22 = os.path.join(os.getcwd(),  "mtsa", "experiments_result", "MFCC", "y_val", "*.csv")
         
     files_csv1 = glob.glob(path_csv15)
     files_csv2 = glob.glob(path_csv16)
@@ -65,7 +67,7 @@ def ShowTableEachParameterCombination(files_csv):
 
         df = pd.read_csv(data)
 
-        df_new = pd.DataFrame(columns=['Parameters', 'Time_Execution', 'ci_lower', 'ci_upper', 'F1_Score', 'AUC'])
+        df_new = pd.DataFrame(columns=['Parameters', 'Time_Execution', 'ci_lower', 'ci_upper', 'ACC', 'Precision', 'Recall', 'F1_Score', 'AUC'])
 
         ci_lower, ci_upper = st.t.interval(confidence=0.95, 
                                        df=len(df['AUC_ROC'])-1, 
@@ -74,13 +76,20 @@ def ShowTableEachParameterCombination(files_csv):
 
         auc_mean = round(df['AUC_ROC'].mean(),2)
         time_execution_mean = round(df['execution_time'].mean(),2)
-        f1_socre = df['F1_Score']
+        acc = round(df['ACC'].mean(), 2)
+        precision = round(df['Precision'].mean(), 2)
+        recall = round(df['Recall'].mean(), 2)
+        f1_socre = round(df['F1_Score'].mean(), 2)
         
         df_new.loc[len(df_new)] = {
             "Parameters": df['parameters_names'][0].split()[0],
             "Time_Execution": time_execution_mean,
-            "ci_lower": ci_lower,
-            "ci_upper": ci_upper,
+            "ci_lower": round(ci_lower, 2),
+            "ci_upper": round(ci_upper, 2),
+            'ACC': acc, 
+            'Precision': precision, 
+            'Recall': recall,
+            'F1_Score': f1_socre,
             "AUC": auc_mean
             } 
                 
@@ -130,7 +139,7 @@ def ShowConfidenceInterval2(df):
 
 
     # Salvar a figura como uma imagem 
-    parameter_name = 'Wavelet'
+    parameter_name = 'MFCC'
     image_name = f'{parameter_name}.png'
     plt.savefig(image_name, bbox_inches='tight', dpi=500)
 
@@ -139,28 +148,33 @@ def ShowConfidenceInterval2(df):
 def ShowTableEachNEstimator(files_csv1, files_csv2):
 
 
-    df_new = pd.DataFrame(columns=['Parameters', 'Time_Execution', 'ci_lower', 'ci_upper', 'F1_Score', 'AUC'])
+    df_new = pd.DataFrame(columns=['Parameters', 'Time_Execution', 'ci_lower', 'ci_upper', 'ACC', 'Precision', 'Recall', 'F1_Score', 'AUC'])
 
     for data in files_csv1:
 
         df = pd.read_csv(data)        
 
-        auc_mean = round(df['AUC_ROC'].mean(),2)
-        time_execution_mean = round(df['execution_time'].mean(),2)
-        f1_socre = round(df['F1_Score'].mean(), 2)
-
         ci_lower, ci_upper = st.t.interval(confidence=0.95, 
                                        df=len(df['AUC_ROC'])-1, 
                                        loc=np.mean(df['AUC_ROC']), 
                                        scale=st.sem(df['AUC_ROC']))
-        
+
+        auc_mean = round(df['AUC_ROC'].mean(),2)
+        time_execution_mean = round(df['execution_time'].mean(),2)
+        acc = round(df['ACC'].mean(), 2)
+        precision = round(df['Precision'].mean(), 2)
+        recall = round(df['Recall'].mean(), 2)
+        f1_socre = round(df['F1_Score'].mean(), 2)
         
         df_new.loc[len(df_new)] = {
             "Parameters": df['parameters_names'][0].split()[0],
             "Time_Execution": time_execution_mean,
-            "ci_lower": ci_lower,
-            "ci_upper": ci_upper,
-            "F1_Score": f1_socre,
+            "ci_lower": round(ci_lower, 2),
+            "ci_upper": round(ci_upper, 2),
+            'ACC': acc, 
+            'Precision': precision, 
+            'Recall': recall,
+            'F1_Score': f1_socre,
             "AUC": auc_mean
             }  
                 

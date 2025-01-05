@@ -1,6 +1,9 @@
 
-from keras.models import Model
-from keras.layers import Input, Dense
+import tensorflow
+
+from tensorflow import keras
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.layers import Input, Dense
 from sklearn.base import BaseEstimator, OutlierMixin
 import numpy as np
 from mtsa.utils import Demux2Array, Wav2Array

@@ -73,9 +73,8 @@ class AbnormalSplit(BaseShuffleSplit):
             permutation_normal = rng.permutation(ind_normal)
             ind_test_normal = permutation_normal[0:len(ind_abnormal)]
             ind_train_normal = permutation_normal[len(ind_abnormal):]
-
             ind_train = ind_train_normal
-            
+
             ind_test = np.concatenate([ind_test_normal, ind_abnormal])
             yield ind_train, ind_test
 
@@ -103,7 +102,7 @@ def get_files_from_path_classes(path):
 
 def files_train_test_split(path, random_state=None):
     X, y = get_files_from_path_classes(path)
-    ind_train, ind_test = next(AbnormalSplit(random_state=random_state,n_splits=1).split(X, y))
+    ind_train, ind_test = next(AbnormalSplit(random_state=random_state,n_splits=1).split(X, y))    
     X_train, X_test, y_train, y_test = X[ind_train], X[ind_test], y[ind_train], y[ind_test]
     return X_train, X_test, y_train, y_test
 

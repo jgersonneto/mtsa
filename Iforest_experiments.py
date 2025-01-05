@@ -110,8 +110,11 @@ def run_iforest_experiment():
 
     
 
-    experiments = np.array([         
-         experiment08    
+    experiments = np.array([   
+         experiment01,
+         experiment04,      
+         experiment08,
+         experiment06    
          ])
     
     #from mtsa import files_train_test_split
@@ -122,8 +125,8 @@ def run_iforest_experiment():
     X_valid = np.array(X_test)
     y_valid = np.array(y_test)
     model_iforest = None
-    
-    k=10
+
+    k=30
     kf = KFold(n_splits=k, shuffle=True, random_state=1)
     kf.get_n_splits(X)
 
@@ -140,13 +143,78 @@ def run_iforest_experiment():
                 y_val = y_valid[val_index]
 
 
-                #IsolationForest(data, parameters, X, y, X_valid, y_valid, result)
+                #IsolationForest(data, i, parameters, X, y, X_valid, y_valid, result)
+                #GetHitachi(data, parameters, X, y, X_valid, y_valid, result)
 
+                model_iforest = IForest(n_estimators=int(parameters[0]), contamination=parameters[1], max_samples=int(parameters[2]), max_features=parameters[3])
 
-                GetHitachi(data, parameters, X, y, X_valid, y_valid, result)
+                # Treinamento do modelo de Isolation Forest
+                fit_execution_time = IsolationForesModelTrain(model_iforest,X)
 
+                # Predição no conjunto de validação
+                #preditions_val = model_iforest.predict(X_val)
+                #new_predition_val = np.where(preditions_val == -1, preditions_val, preditions_val + 1)
+                #print(f'preditions_val: \n{preditions_val}\n')       
+
+                # Avaliação dos resultados
+                ### COMENZAR O CODIGO AQUI ### 
+                #rmse = mean_squared_error(y_val, preditions_val, squared=False)
+                #score = r2_score(y_val, preditions_val)
+                #score_samples = model_iforest.score_samples(X_val)
+
+                #acc = model_iforest.evaluation(X_valid, y_valid)
+                auc_execution_time_start = time.time()
+
+                acc = metrics.accuracy_score(y_valid,model_iforest.predict(X_valid))
+                precision = metrics.precision_score(y_valid, model_iforest.predict(X_valid))
+                recall = metrics.recall_score(y_valid,model_iforest.predict(X_valid))
+                f1_score = 2*precision*recall/(precision+recall)
+
+                auc = calculate_aucroc(model_iforest, X_valid, y_valid)
+
+                auc_execution_time_end = time.time()
+                auc_execution_time = auc_execution_time_end - auc_execution_time_start
+
+                printMetrics = {
+                                    'acc': acc,
+                                    'precision': precision,
+                                    'recall': recall,
+                                    'f1_score': f1_score
+                                }
                 
-                
+                #experiment_dataframe.loc['AUC_ROC'] = auc
+
+                file_path = f'n_estimator-{parameters[0]}_contamination-{parameters[1]}_max_samples-{parameters[2]}_max_features-{parameters[3]}.csv'
+                if os.path.isfile(file_path):
+                    df_existente = pd.read_csv(file_path)
+                    df_existente.loc[len(df_existente)] = {
+                                                            'actual_dataset': data[1], 
+                                                            'parameters_names': f'n_estimator-{parameters[0]}_contamination-{parameters[1]}_max_samples-{parameters[2]}_max_features-{parameters[3]}', 
+                                                            'n_estimators': parameters[0], 
+                                                            'max_samples': parameters[2], 
+                                                            'contamination': parameters[1], 
+                                                            'max_features': parameters[3], 
+                                                            'fit_execution_time': fit_execution_time, 
+                                                            'auc_execution_time': auc_execution_time, 
+                                                            'execution_time': fit_execution_time + auc_execution_time,
+                                                            'ACC': acc,
+                                                            'Precision': precision,
+                                                            'Recall': recall,
+                                                            'F1_Score': f1_score,
+                                                            'AUC_ROC': auc
+                                                            }
+                    #experiment_dataframe = pd.concat([df_existente, experiment_dataframe], ignore_index=True)
+                    df_existente.to_csv(file_path, sep=',', encoding='utf-8', index=False)
+                else:
+                    execution_time = fit_execution_time + auc_execution_time
+                    experiment_dataframe = model_iforest.get_experiment_dataframe(data[1], f'n_estimator-{parameters[0]}_contamination-{parameters[1]}_max_samples-{parameters[2]}_max_features-{parameters[3]}', fit_execution_time, auc_execution_time, execution_time, acc, precision, recall, f1_score, auc)
+                    experiment_dataframe.to_csv(file_path, sep=',', encoding='utf-8', index=False)
+
+                result.append([auc])  
+                print( f'K({i}):\t|{auc:0.5f}\t|{fit_execution_time:0.5f}\t|{auc_execution_time:0.5f}\t|' )
+                print( f'K({i}):\t|{printMetrics}\t|' )
+                print('---'*20)
+                                
 
     dados = { 
         'y_val': y_valid, 
@@ -157,7 +225,7 @@ def run_iforest_experiment():
 
     df.to_csv(f'y_val.csv', sep=',', encoding='utf-8', index=False)    
 
-def IsolationForest(data, parameters, X, y, X_valid, y_valid, result):
+def IsolationForest(data, i, parameters, X, y, X_valid, y_valid, result):
     model_iforest = IForest(n_estimators=int(parameters[0]), contamination=parameters[1], max_samples=int(parameters[2]), max_features=parameters[3])
 
     # Treinamento do modelo de Isolation Forest
@@ -277,7 +345,7 @@ def GetHitachi(data, parameters, X, y, X_valid, y_valid, result):
         df_existente.to_csv(file_path, sep=',', encoding='utf-8', index=False)
     else:
         execution_time = fit_execution_time + auc_execution_time
-        experiment_dataframe = model_iforest.get_experiment_dataframe(data[1], 'hitachi', fit_execution_time, auc_execution_time, execution_time, acc, precision, recall, f1_score, auc)
+        experiment_dataframe = model_hitachi.get_experiment_dataframe(data[1], 'hitachi', fit_execution_time, auc_execution_time, execution_time, acc, precision, recall, f1_score, auc)
         experiment_dataframe.to_csv(file_path, sep=',', encoding='utf-8', index=False)
 
     result.append([auc])  
